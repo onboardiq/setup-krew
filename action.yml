@@ -1,0 +1,16 @@
+name: setup-krew
+description: "A GitHub Action to install kubernetes-sigs/krew tool"
+inputs:
+  krew-version:
+    description: "version of the krew"
+    required: false
+    default: "latest"
+runs:
+  using: 'composite'
+  steps:
+    - name: "setup-krew"
+      shell: bash
+      run: KREW_VERSION=${{ inputs.krew-version }} ${{ github.action_path }}/setup-krew
+    - name: "setup-path"
+      shell: bash
+      run: echo "${KREW_ROOT:-$HOME/.krew}/bin" >> $GITHUB_PATH
