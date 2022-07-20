@@ -1,0 +1,58 @@
+name: krew-test
+
+on:
+  push:
+    branches: ['**']
+
+jobs:
+  krew-version-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+
+      - name: 'Install Kubectl'
+        id: install-kubectl
+        uses: azure/setup-kubectl@v3.0
+        with:
+          version: v1.19.0
+
+      - name: 'Install krew pinned to a version'
+        run: /bin/bash ./setup-krew
+        env:
+          KREW_VERSION: v0.4.3
+
+      - name: "setup-path"
+        run: echo "${KREW_ROOT:-$HOME/.krew}/bin" >> $GITHUB_PATH
+
+      - name: 'Check krew install'
+        run: kubectl-krew version
+
+      - name: 'Install krew plugin neat'
+        run: kubectl krew install neat
+
+  krew-latest-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+
+      - name: 'Install Kubectl'
+        id: install-kubectl
+        uses: azure/setup-kubectl@v3.0
+        with:
+          version: v1.19.0
+
+      - name: 'Install latest krew'
+        run: /bin/bash ./setup-krew
+        env:
+          KREW_VERSION: latest
+
+      - name: "setup-path"
+        run: echo "${KREW_ROOT:-$HOME/.krew}/bin" >> $GITHUB_PATH
+
+      - name: 'Check krew install'
+        run: kubectl-krew version
+
+      - name: 'Install krew plugin neat'
+        run: kubectl krew install neat
